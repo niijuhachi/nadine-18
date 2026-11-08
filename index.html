@@ -1,0 +1,766 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Nadine's 18th</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Quicksand:wght@500;600&family=Cutive&display=swap" rel="stylesheet">
+<style>
+  /* Layout: one sticky full-screen stage inside a tall scroll track. Scroll progress drives
+     the flap, the envelope's slide to the lower left, and the note that appears on the right. */
+  :root {
+    --paper: #efedef;
+    --ink: #3f2d4d;
+    --ink-soft: #4d3a5b;
+    --pink: #fbefb4;
+    --lavender: #f8e9a6;
+    --lavender-deep: #f0dc8a;
+    --shadow: rgba(110, 90, 30, 0.22);
+    --font-display: "Gaegu", "Comic Sans MS", "Marker Felt", cursive;
+    --font-body: "Quicksand", "Nunito", "Trebuchet MS", system-ui, sans-serif;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+  }
+
+  #track { height: 570vh; position: relative; }
+
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: #78aedc url("bg.jpg") center / cover no-repeat;
+  }
+
+  #sparkles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* Envelope. #env is a zero-size anchor sitting on the middle of the envelope body. */
+  #env {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+    filter: drop-shadow(0 10px 12px var(--shadow));
+  }
+  #constructed {
+    position: absolute;
+    left: -243px;
+    top: -184px;
+    width: 486px;
+    height: 368px;
+  }
+  #constructed img { display: block; max-width: none; user-select: none; -webkit-user-drag: none; }
+  .shell { position: absolute; left: 0; top: 0; width: 486px; height: 368px; }
+  .inside {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 486px;
+    height: 368px;
+    clip-path: polygon(13px 68px,436px 12px,436px 42.9px,430px 45.9px,429px 46.7px,422px 54.5px,415px 62.5px,408px 70.6px,401px 78.4px,394px 86.4px,387px 94.5px,380px 102.2px,373px 110.2px,366px 118.2px,359px 126.2px,352px 134.4px,345px 142.4px,338px 150.2px,331px 157.8px,324px 165.9px,317px 173.8px,310px 181.6px,303px 189.4px,296px 197.8px,289px 205.4px,282px 212.5px,275px 220.8px,268px 228.9px,261px 235.9px,254px 239.7px,247px 240.3px,240px 238.3px,233px 234.7px,226px 230.5px,219px 225.4px,212px 220.5px,205px 216.2px,198px 211.7px,191px 207.1px,184px 202.6px,177px 198.1px,170px 193.5px,163px 188.7px,156px 184.1px,149px 179.5px,142px 174.8px,135px 170.4px,128px 166.1px,121px 161.8px,114px 157.2px,107px 152.4px,100px 147.7px,93px 143.2px,86px 138.6px,79px 134.2px,72px 129.4px,65px 124.9px,58px 120.4px,51px 115.7px,44px 110.6px,37px 105.2px,30px 99.4px,23px 85.1px,16px 78.8px,13px 78.8px);
+    background: linear-gradient(172deg, var(--lavender-deep) 0%, var(--lavender) 45%, var(--lavender-deep) 100%);
+  }
+  .hinge {
+    position: absolute;
+    left: 13px;
+    top: 68px;
+    width: 426.7px;
+    height: 0;
+    transform-origin: 0 0;
+    transform: rotate(-7.54deg);
+  }
+  .flap {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 426.7px;
+    height: 240px;
+    transform-origin: 50% 0;
+    will-change: transform;
+  }
+  .flap-face {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 486px;
+    height: 368px;
+    transform-origin: 0 0;
+    transform: rotate(7.54deg) translate(-13px, -68px);
+    clip-path: polygon(13px 68px,436px 12px,436px 42.9px,430px 45.9px,429px 46.7px,422px 54.5px,415px 62.5px,408px 70.6px,401px 78.4px,394px 86.4px,387px 94.5px,380px 102.2px,373px 110.2px,366px 118.2px,359px 126.2px,352px 134.4px,345px 142.4px,338px 150.2px,331px 157.8px,324px 165.9px,317px 173.8px,310px 181.6px,303px 189.4px,296px 197.8px,289px 205.4px,282px 212.5px,275px 220.8px,268px 228.9px,261px 235.9px,254px 239.7px,247px 240.3px,240px 238.3px,233px 234.7px,226px 230.5px,219px 225.4px,212px 220.5px,205px 216.2px,198px 211.7px,191px 207.1px,184px 202.6px,177px 198.1px,170px 193.5px,163px 188.7px,156px 184.1px,149px 179.5px,142px 174.8px,135px 170.4px,128px 166.1px,121px 161.8px,114px 157.2px,107px 152.4px,100px 147.7px,93px 143.2px,86px 138.6px,79px 134.2px,72px 129.4px,65px 124.9px,58px 120.4px,51px 115.7px,44px 110.6px,37px 105.2px,30px 99.4px,23px 85.1px,16px 78.8px,13px 78.8px);
+  }
+  .flap-back {
+    background: linear-gradient(185deg, var(--lavender-deep) 0%, var(--lavender) 70%);
+    visibility: hidden;
+  }
+
+  /* Front of the envelope pocket: same art, cut along the V so cards can slide out behind it. */
+  #constructed { z-index: auto; }
+  .shell { z-index: 1; }
+  .inside { z-index: 2; }
+  .hinge { z-index: 3; }
+  .pocket {
+    position: absolute; left: 0; top: 0; width: 486px; height: 368px; z-index: 5;
+    clip-path: polygon(0px 78.8px,13px 78.8px,16px 78.8px,23px 85.1px,30px 99.4px,37px 105.2px,44px 110.6px,51px 115.7px,58px 120.4px,65px 124.9px,72px 129.4px,79px 134.2px,86px 138.6px,93px 143.2px,100px 147.7px,107px 152.4px,114px 157.2px,121px 161.8px,128px 166.1px,135px 170.4px,142px 174.8px,149px 179.5px,156px 184.1px,163px 188.7px,170px 193.5px,177px 198.1px,184px 202.6px,191px 207.1px,198px 211.7px,205px 216.2px,212px 220.5px,219px 225.4px,226px 230.5px,233px 234.7px,240px 238.3px,247px 240.3px,254px 239.7px,261px 235.9px,268px 228.9px,275px 220.8px,282px 212.5px,289px 205.4px,296px 197.8px,303px 189.4px,310px 181.6px,317px 173.8px,324px 165.9px,331px 157.8px,338px 150.2px,345px 142.4px,352px 134.4px,359px 126.2px,366px 118.2px,373px 110.2px,380px 102.2px,387px 94.5px,394px 86.4px,401px 78.4px,408px 70.6px,415px 62.5px,422px 54.5px,429px 46.7px,430px 45.9px,436px 42.9px,436px 42.9px,486px 42.9px,486px 368px,0px 368px);
+  }
+
+  /* Invitation pieces. Every sprite is centred on its own origin and moved by script. */
+  #cards, #decor { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  #cards { z-index: 4; }
+  #decor { pointer-events: none; }
+  .sp { position: absolute; display: block; max-width: none; user-select: none; -webkit-user-drag: none; will-change: transform; transform-origin: 50% 50%; visibility: hidden; }
+  .sp img { display: block; width: 100%; height: 100%; max-width: none; -webkit-user-drag: none; }
+  #card img { filter: drop-shadow(0 8px 14px rgba(40, 60, 110, 0.22)); }
+  a#postcard { pointer-events: none; cursor: pointer; -webkit-tap-highlight-color: transparent; outline: none; }
+  a#postcard img { transition: transform .35s cubic-bezier(.3,1.5,.5,1), filter .25s; transform-origin: 50% 50%; }
+  a#postcard.live { pointer-events: auto; }
+  a#postcard.live:hover img, a#postcard.live:focus-visible img { transform: scale(1.035) rotate(-1.2deg); filter: drop-shadow(0 14px 18px rgba(40, 60, 110, 0.3)) brightness(1.03); }
+  a#postcard.live:active img { transform: scale(0.99); }
+  .decor-sp img { filter: drop-shadow(0 5px 7px rgba(40, 60, 110, 0.2)); }
+
+  .tap {
+    --h: 0;
+    position: absolute; left: 0; right: 0; bottom: max(14px, 2.4vh);
+    text-align: center; opacity: var(--h);
+    font-family: var(--font-display); font-weight: 700; font-size: 1.4rem;
+    color: #fff; text-shadow: 0 1px 6px rgba(40, 70, 130, 0.55);
+    transform: translateY(calc((1 - var(--h)) * 10px));
+    display: flex; flex-direction: column; align-items: center; gap: .2rem;
+  }
+  .tap svg { width: 22px; height: 22px; animation: bob 1.8s ease-in-out infinite; }
+
+
+  /* ===== Guest sheet (gifts / attendees / wishlist) and countdown ===== */
+  :root { --g: 0; --tm: 0; --mag: #9d2584; --pinkh: #d24fb0; --peri: #6a70d8; --font-names: "Cutive", "Special Elite", "Courier New", serif; }
+  #scene { position: absolute; inset: 0; }
+  #sheet {
+    position: absolute; z-index: 3;
+    top: 10%; height: 76.4%;
+    left: calc(var(--tm) * 6.8%); right: calc(var(--tm) * 6.8%);
+    border-radius: calc(var(--tm) * 64px);
+    background: linear-gradient(180deg, #fffdf5 0%, #fbfaf3 30%, #e5e4de 100%);
+    box-shadow: 0 10px 40px rgba(40, 70, 130, 0.18);
+    overflow: hidden;
+    transform: translateY(calc((1 - var(--g)) * 105vh));
+    pointer-events: none;
+    user-select: none; -webkit-user-select: none;
+    visibility: hidden;
+  }
+  #sheet.on { visibility: visible; }
+  #sheet.live { pointer-events: auto; }
+  .fadeout { opacity: max(0, calc(1 - var(--tm) * 2.2)); }
+  #pages { position: absolute; inset: 0; touch-action: pan-y; }
+  .page { position: absolute; inset: 0; transition: transform .6s cubic-bezier(.22, 1, .36, 1); will-change: transform; }
+  #pages.dragging .page { transition: none; }
+  .mq { position: absolute; left: 0; right: 0; overflow: hidden; white-space: nowrap; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem, 3vh, 1.9rem); letter-spacing: .02em; }
+  .mq i { display: inline-block; font-style: normal; animation: mq 40s linear infinite; }
+  .mq.rev i { animation-direction: reverse; }
+  @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .mq-top { top: 4%; color: var(--peri); }
+  .mq-bottom { bottom: 3.5%; color: var(--mag); }
+  :root { --hk: .02489vw; }
+  .page h2 { position: absolute; top: 13%; margin: 0; line-height: 0; }
+  .page h2 img { display: inline-block; width: calc(var(--n) * var(--hk)); height: auto; max-width: 90%; filter: drop-shadow(0 2px 3px rgba(60, 80, 140, .12)); }
+  .page h2.left { left: 8%; }
+  .page h2.center { left: 0; right: 0; text-align: center; }
+  .body { position: absolute; left: 6%; right: 6%; top: 27%; bottom: 14%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: clamp(1.4rem, 7vh, 4.4rem);
+    font-family: var(--font-names); font-size: clamp(1.1rem, 3.3vh, 2.1rem); line-height: 1.5; color: #14100f; text-align: center; }
+  .row { display: flex; justify-content: center; align-items: flex-start; gap: 0 clamp(2rem, 8vw, 7.5rem); flex-wrap: wrap; }
+  .row > div > div { white-space: nowrap; }
+  .wish { gap: 0; line-height: 1.3; }
+  .wish div { padding: .08em 0; }
+  .arrow { position: absolute; top: 50%; width: 64px; height: 90px; margin-top: -45px; border: 0; background: none; padding: 0; cursor: pointer; color: var(--mag); display: grid; place-items: center; -webkit-tap-highlight-color: transparent; transition: transform .2s, opacity .3s; }
+  .arrow svg { width: 42px; height: 52px; }
+  .arrow.prev { left: 1.2%; } .arrow.next { right: 1.2%; }
+  .arrow:hover:not(:disabled) { transform: scale(1.15); }
+  .arrow:disabled { opacity: calc(.22 * max(0, 1 - var(--tm) * 2.2)); cursor: default; }
+  .arrow:focus-visible { outline: 3px solid var(--peri); border-radius: 12px; }
+  #timer { position: absolute; inset: 0; display: grid; place-items: center; opacity: max(0, calc(var(--tm) * 2.2 - 1.2)); transform: translateY(calc((1 - var(--tm)) * 24px)); pointer-events: none; }
+  .clock { display: flex; align-items: flex-start; justify-content: center; gap: 0 clamp(.3rem, 2vw, 2rem); }
+  .unit { text-align: center; }
+  .num { display: block; font-family: var(--font-display); font-weight: 700; font-size: min(19vh, 14.5vw); line-height: 1; color: var(--mag); -webkit-text-stroke: .045em var(--mag); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+  .lbl { display: block; margin-top: .4rem; font-family: var(--font-names); font-size: clamp(1rem, 3vh, 1.9rem); color: var(--peri); }
+  .sep { font-family: var(--font-display); font-weight: 700; font-size: min(19vh, 14.5vw); line-height: 1; color: var(--mag); -webkit-text-stroke: .045em var(--mag); padding-top: .02em; }
+  .done { margin-top: 1.2rem; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.4rem, 4vh, 2.4rem); color: var(--pinkh); min-height: 1.2em; }
+
+  #corners { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: var(--g); }
+  .cn { position: absolute; transform: scale(calc(.5 + var(--g) * .5)); }
+  .cn img { display: block; width: 100%; height: auto; animation: sway 5s ease-in-out infinite; filter: drop-shadow(0 5px 7px rgba(40, 60, 110, .2)); }
+  .cn.pk { width: clamp(80px, 10.4vw, 190px); left: -2.4vw; top: -1.2vh; }
+  .cn.by { width: clamp(80px, 9.6vw, 180px); right: -2.4vw; bottom: 4vh; }
+  .cn.bu { width: clamp(90px, 13.6vw, 240px); left: -.2vw; bottom: 3.6vh; }
+  .cn.by img { animation-delay: -1.7s; } .cn.bu img { animation-delay: -3.1s; animation-name: bobby; }
+  @keyframes sway { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  @keyframes bobby { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-7px) rotate(3deg); } }
+  .hint { z-index: 6; text-shadow: 0 1px 6px rgba(40, 70, 130, .5); color: #fff; }
+
+  @media (max-width: 700px) {
+    :root { --hk: .065vw; }
+    .page h2 { top: 11%; }
+    .row { gap: .4rem 1.6rem; }
+    .body { top: 25%; font-size: clamp(.95rem, 2.6vh, 1.3rem); gap: 1.1rem; }
+    .page h2.left { left: 7%; }
+    .arrow { width: 44px; } .arrow svg { width: 30px; height: 38px; }
+    .row.r4 > div, .row.r3 > div { flex: 0 0 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mq i, .cn img { animation: none; } .page { transition: none; } }
+
+  /* Text layers */
+  .gutter {
+    position: absolute;
+    inset: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    pointer-events: none;
+  }
+  .hint {
+    --h: 1;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: max(22px, 5vh);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    opacity: var(--h);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.45rem;
+    color: var(--ink-soft);
+  }
+  .hint svg { width: 22px; height: 22px; animation: bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hint svg { animation: none; }
+    a#postcard img { transition: none; }
+  }
+
+</style>
+
+<main id="track">
+  <section class="stage" id="stage" aria-label="A pink envelope that opens as you scroll">
+    <canvas id="sparkles" aria-hidden="true"></canvas>
+
+    <div id="scene">
+    <div id="env" aria-hidden="true">
+      <div id="constructed">
+        <img class="shell" src="closed.webp" alt="" width="486" height="368">
+        <div class="inside"></div>
+        <div class="hinge">
+          <div class="flap" id="flap">
+            <img class="flap-face" id="flapFront" src="closed.webp" alt="" width="486" height="368">
+            <div class="flap-face flap-back" id="flapBack"></div>
+          </div>
+        </div>
+        <img class="pocket" src="closed.webp" alt="" width="486" height="368">
+      </div>
+      <div id="cards">
+        <div class="sp" id="card" aria-hidden="true"><img src="card.webp" alt="" width="889" height="610"></div>
+        <a class="sp" id="postcard" href="https://share.google/L5WcTxe82DIo1A7Ge" target="_blank" rel="noopener" aria-label="Open the invitation details"><img src="postcard.webp" alt="" width="1217" height="864"></a>
+      </div>
+    </div>
+
+    <div id="decor" aria-hidden="true"></div>
+    </div>
+
+    <div id="sheet">
+      <div id="pages" class="fadeout">
+        <section class="page" aria-label="18 gifts">
+          <div class="mq mq-top" data-t="guestlist"></div>
+          <h2 class="left"><img src="h-gifts.webp" alt="18 gifts" style="--n:757" width="757" height="198"></h2>
+          <div class="body"><div class="row r3"><div><div>Ceana</div><div>Nicole</div><div>Trixcy</div></div><div><div>Janoah</div><div>Mira</div><div>Cass</div></div><div><div>Ann</div><div>Ashley Nicole</div><div>Regine</div></div></div><div class="row r3"><div><div>Ica</div><div>Marco</div><div>Maxine</div></div><div><div>Lyn</div><div>Farrah</div><div>Emmer</div></div><div><div>Trysh</div><div>Iesha</div><div>Kayt</div></div></div></div>
+        </section>
+        <section class="page" aria-label="Attendees">
+          <div class="mq mq-top" data-t="guestlist"></div>
+          <h2 class="left"><img src="h-attendees.webp" alt="attendees" style="--n:1032" width="1032" height="174"></h2>
+          <div class="body"><div class="row r4"><div><div>Ms. Adona</div><div>Joel</div><div>Neil</div></div><div><div>Jayson</div><div>Ellaine</div><div>Sofia Laniohan</div></div><div><div>Cherry</div><div>Ronil</div><div>Ashley Anne</div></div><div><div>Jhonina</div><div>Jeanne</div><div>Angel</div></div></div><div class="row r3"><div><div>Alexcy</div><div>Sophia Valiente</div><div>Keziah</div></div><div><div>Bryle</div><div>Wes</div><div>Quimpo</div></div><div><div>Eliyah</div><div>Renzo</div><div>Godric</div></div></div></div>
+        </section>
+        <section class="page" aria-label="Wishlist">
+          <div class="mq mq-top" data-t="wishlist"></div>
+          <h2 class="center"><img src="h-wishlist.webp" alt="wishlist" style="--n:768" width="768" height="141"></h2>
+          <div class="body wish"><div>Sonny angels</div><div>Smiskis</div><div>Squishies</div><div>Littlest pet shop toys</div><div>Tabalicious DIY kit</div><div>Snack tastic sweet creations diy kit</div><div>SM gift card</div><div>Slime mart kits</div><div>Cash</div></div>
+        </section>
+      </div>
+      <div class="mq mq-bottom rev fadeout" data-t="Nadine @18"></div>
+      <button class="arrow prev fadeout" id="prev" aria-label="Previous page"><svg viewBox="0 0 42 52" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M34 6 L9 26 L34 46"/></svg></button>
+      <button class="arrow next fadeout" id="next" aria-label="Next page"><svg viewBox="0 0 42 52" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6 L33 26 L8 46"/></svg></button>
+      <div id="timer" aria-live="off">
+        <div>
+          <div class="clock">
+            <div class="unit"><span class="num" id="tD">00</span><span class="lbl">Days</span></div>
+            <span class="sep">:</span>
+            <div class="unit"><span class="num" id="tH">00</span><span class="lbl">Hours</span></div>
+            <span class="sep">:</span>
+            <div class="unit"><span class="num" id="tM">00</span><span class="lbl">Minutes</span></div>
+          </div>
+          <div class="done" id="tDone"></div>
+        </div>
+      </div>
+    </div>
+    <div id="corners" aria-hidden="true">
+      <div class="cn pk"><img src="pink.webp" alt=""></div>
+      <div class="cn bu"><img src="buoy.webp" alt=""></div>
+      <div class="cn by"><img src="blue.webp" alt=""></div>
+    </div>
+
+    <div class="gutter">
+      <div class="hint" id="hint">
+        <span>scroll</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="tap" id="tap"><span>scroll</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></div>
+    </div>
+  </section>
+</main>
+
+
+
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var track = document.getElementById('track');
+  var env = document.getElementById('env');
+  var flap = document.getElementById('flap');
+  var flapFront = document.getElementById('flapFront');
+  var flapBack = document.getElementById('flapBack');
+  var constructed = document.getElementById('constructed');
+  var hint = document.getElementById('hint');
+  var cv = document.getElementById('sparkles');
+  var ctx = cv.getContext('2d');
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeSine(t) { return 0.5 - 0.5 * Math.cos(Math.PI * t); }
+  function easeCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  /* ---------- layout ---------- */
+  var W = 0, H = 0, DPR = 1, k = 1, c0x = 0, c0y = 0, c1x = 0, c1y = 0, small = false;
+
+  function layout() {
+    W = stage.clientWidth;
+    H = stage.clientHeight;
+    small = W < 760;
+    var kw = small ? 0.8 * W / 432 : 0.36 * W / 432;
+    k = Math.min(kw, 0.62 * H / 485, (W - 32) / 528);
+    c0x = W / 2;
+    c0y = H * 0.5 - 4;
+    if (small) {
+      c1x = W / 2;
+      c1y = H - 228.5 * k - 18;
+    } else {
+      c1x = clamp(W * 0.24, 264 * k + 20, W - 264 * k - 16);
+      c1y = Math.min(H * 0.74, H - 228.5 * k - 20);
+    }
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    seedStars();
+    computeScene();
+    if (RM) drawStars(0);
+  }
+
+  /* ---------- sparkles ---------- */
+  /* Bubbles: soft translucent spheres that drift upward with a gentle sway. */
+  var stars = [];
+  var bursts = [];
+
+  function seedStars() {
+    var n = Math.round(clamp(W * H / 22000, 22, 60));
+    var rMin = small ? 3 : 4, rMax = small ? 14 : 22;
+    stars = [];
+    for (var i = 0; i < n; i++) {
+      // many small bubbles, a few large ones
+      var r = rMin + Math.pow(Math.random(), 2.2) * (rMax - rMin);
+      stars.push({
+        x: rand(0, W), y: rand(0, H),
+        r: r,
+        vy: -(rand(14, 30) + (22 - r) * 0.9),
+        sway: rand(6, 16), sf: rand(0.5, 1.2),
+        ph: rand(0, Math.PI * 2),
+        a: rand(0.55, 1)
+      });
+    }
+  }
+
+  function paintBubble(x, y, r, alpha) {
+    ctx.globalAlpha = alpha;
+    // body: clear in the middle, brighter toward the rim
+    var g = ctx.createRadialGradient(x, y, r * 0.25, x, y, r);
+    g.addColorStop(0, 'rgba(255,255,255,0.04)');
+    g.addColorStop(0.7, 'rgba(255,255,255,0.14)');
+    g.addColorStop(1, 'rgba(255,255,255,0.38)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    // rim
+    ctx.lineWidth = Math.max(1, r * 0.07);
+    ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+    ctx.stroke();
+    // main highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.38, y - r * 0.4, r * 0.22, r * 0.12, -0.7, 0, Math.PI * 2);
+    ctx.fill();
+    // small secondary glint
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.arc(x + r * 0.4, y + r * 0.42, Math.max(0.8, r * 0.07), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  var scrollKick = 0;
+  function drawStars(dt, t) {
+    ctx.clearRect(0, 0, W, H);
+    var i, s;
+    t = t || 0;
+    for (i = 0; i < stars.length; i++) {
+      s = stars[i];
+      if (!RM && dt) {
+        s.y += (s.vy + scrollKick) * dt;
+        if (s.y < -s.r - 6) { s.y = H + s.r + 6; s.x = rand(0, W); }
+        if (s.y > H + s.r + 6) { s.y = -s.r - 6; s.x = rand(0, W); }
+      }
+      var dx = RM ? 0 : Math.sin(t * s.sf + s.ph) * s.sway;
+      paintBubble(s.x + dx, s.y, s.r, s.a);
+    }
+    for (i = bursts.length - 1; i >= 0; i--) {
+      var b = bursts[i];
+      b.life -= dt;
+      if (b.life <= 0) { bursts.splice(i, 1); continue; }
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      b.vx *= 0.97; b.vy = b.vy * 0.985 - 12 * dt; // buoyancy: they float up
+      paintBubble(b.x + Math.sin(t * 3 + b.ph) * 4, b.y, b.r, clamp(b.life / b.max * 1.4, 0, 1));
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function emitBurst(x, y) {
+    if (RM) return;
+    for (var i = 0; i < 22; i++) {
+      var ang = rand(-Math.PI * 0.95, -Math.PI * 0.05);
+      var sp = rand(40, 150);
+      var life = rand(1.6, 2.6);
+      bursts.push({
+        x: x + rand(-40, 40) * k, y: y,
+        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+        r: rand(3, 11), ph: rand(0, 6.28),
+        life: life, max: life
+      });
+    }
+  }
+
+  /* ---------- invitation pieces ---------- */
+  var NAT = {
+    card: [889, 610], postcard: [1217, 864],
+    pink: [231, 230], blue: [256, 255], buoy: [232, 251],
+    squid: [85, 146], patrick: [139, 135], spongesandy: [190, 143], krabs: [91, 160]
+  };
+  function sizeSprite(el, name) {
+    var n = NAT[name];
+    el.style.width = n[0] + 'px'; el.style.height = n[1] + 'px';
+    el.style.left = (-n[0] / 2) + 'px'; el.style.top = (-n[1] / 2) + 'px';
+  }
+  var cardEl = document.getElementById('card');
+  var pcEl = document.getElementById('postcard');
+  var decorBox = document.getElementById('decor');
+  var tapEl = document.getElementById('tap');
+  sizeSprite(cardEl, 'card'); sizeSprite(pcEl, 'postcard');
+
+  // decorations pop in one after another once the cards have settled
+  var DEC = [
+    { name: 'pink',        kind: 'flower', t0: 0.84, dur: 0.07, spin: -200 },
+    { name: 'blue',        kind: 'flower', t0: 0.865, dur: 0.07, spin: 200 },
+    { name: 'buoy',        kind: 'buoy',   t0: 0.89, dur: 0.08 },
+    { name: 'squid',       kind: 'char',   t0: 0.915, dur: 0.05, cx: 576,  cy: 801 },
+    { name: 'patrick',     kind: 'char',   t0: 0.935, dur: 0.05, cx: 711,  cy: 800 },
+    { name: 'spongesandy', kind: 'char',   t0: 0.955, dur: 0.05, cx: 874,  cy: 797 },
+    { name: 'krabs',       kind: 'char',   t0: 0.975, dur: 0.05, cx: 1014, cy: 783 }
+  ];
+  DEC.forEach(function (d) {
+    var el = document.createElement('div');
+    el.className = 'sp decor-sp';
+    var im = document.createElement('img');
+    im.src = '' + d.name + '.webp'; im.alt = '';
+    el.appendChild(im);
+    sizeSprite(el, d.name);
+    decorBox.appendChild(el);
+    d.el = el;
+  });
+
+  /* Where everything lands (screen px), and where the cards sit while still inside the envelope. */
+  var FIN = {}, REST = {}, RISE = {};
+  var COMP = { // fitted to the reference image (1366x952 design space): cx, cy, scale, rotation
+    card: [648.8, 300.4, 0.802, -5.86], postcard: [819.8, 628.7, 0.5798, 0],
+    pink: [252, 275.5, 0.65, 0], blue: [1023, 381.5, 0.6, 0], buoy: [418, 604.9, 0.835, 0],
+    group: [1038, 846, 0.395, 0]
+  };
+  function computeScene() {
+    FIN = {};
+    if (W / H >= 0.9) {
+      var f = Math.min(W / 1366, H / 952);
+      var ox = W / 2 - 683 * f, oy = H / 2 - 476 * f;
+      var put = function (n, cx, cy, sc, rot) { FIN[n] = { x: ox + cx * f, y: oy + cy * f, sc: sc * f, rot: rot }; };
+      ['card', 'postcard', 'pink', 'blue', 'buoy'].forEach(function (n) { var c = COMP[n]; put(n, c[0], c[1], c[2], c[3]); });
+      var g = COMP.group, gr = g[3] * Math.PI / 180;
+      DEC.forEach(function (d) {
+        if (d.kind !== 'char') return;
+        var dx = (d.cx - 796) * g[2], dy = (d.cy - 788) * g[2];
+        put(d.name, g[0] + dx * Math.cos(gr) - dy * Math.sin(gr), g[1] + dx * Math.sin(gr) + dy * Math.cos(gr), g[2], g[3]);
+      });
+    } else {
+      // tall screens: card on top, postcard below
+      var u = Math.min(W, 0.66 * H), cx = W / 2, cy = H / 2;
+      FIN.card = { x: cx, y: cy - 0.30 * u, sc: 0.90 * u / 889, rot: -3 };
+      FIN.postcard = { x: cx + 0.01 * u, y: cy + 0.27 * u, sc: 0.95 * u / 1217, rot: -2 };
+      FIN.pink = { x: cx - 0.35 * u, y: cy - 0.47 * u, sc: 0.22 * u / 231, rot: -8 };
+      FIN.blue = { x: cx + 0.35 * u, y: cy - 0.03 * u, sc: 0.22 * u / 256, rot: 8 };
+      FIN.buoy = { x: cx - 0.30 * u, y: cy + 0.56 * u, sc: 0.27 * u / 232, rot: -4 };
+      var gs = 0.5 * u / 529, gx = cx + 0.22 * u, gy = cy + 0.62 * u;
+      DEC.forEach(function (d) {
+        if (d.kind !== 'char') return;
+        FIN[d.name] = { x: gx + (d.cx - 796) * gs, y: gy + (d.cy - 788) * gs, sc: gs, rot: 3 };
+      });
+    }
+    // resting spot inside the envelope (local px, origin = middle of the envelope art)
+    REST.card = { x: 243, y: 200, rot: -7.54, sc: 360 / 889 };
+    REST.postcard = { x: 243, y: 238, rot: -12.1, sc: 300 / 1217 };
+    // end of the "slide out" step: card well clear of the pocket, postcard about half out
+    var halfC = 0.5 * 610 * REST.card.sc;
+    var cyC = 184 + halfC + (0.07 * H - c0y) / k;
+    RISE.card = { x: 243 - 20, y: cyC, rot: -3, sc: REST.card.sc };
+    RISE.postcard = { x: 243 + 20, y: cyC + 150, rot: -2.5, sc: 410 / 1217 };
+  }
+
+
+  /* ---------- guest sheet + countdown ---------- */
+  var sheetEl = document.getElementById('sheet'), pagesEl = document.getElementById('pages');
+  var pageEls = Array.prototype.slice.call(pagesEl.querySelectorAll('.page'));
+  var prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next');
+  var sceneEl = document.getElementById('scene');
+  var idx = 0, dragX = 0, sheetLive = false;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.mq'), function (el) {
+    var txt = el.getAttribute('data-t') + ' - ', half = '';
+    for (var i = 0; i < 18; i++) half += txt;
+    el.innerHTML = '<i>' + half + half + '</i>';
+  });
+
+  function renderPages() {
+    pageEls.forEach(function (pg, i) {
+      pg.style.transform = 'translateX(calc(' + ((i - idx) * 100) + '% + ' + dragX + 'px))';
+      pg.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+    });
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === pageEls.length - 1;
+  }
+  function go(n) { idx = clamp(n, 0, pageEls.length - 1); dragX = 0; renderPages(); }
+  prevBtn.addEventListener('click', function () { go(idx - 1); });
+  nextBtn.addEventListener('click', function () { go(idx + 1); });
+  window.addEventListener('keydown', function (e) {
+    if (!sheetLive) return;
+    if (e.key === 'ArrowRight') go(idx + 1);
+    else if (e.key === 'ArrowLeft') go(idx - 1);
+  });
+  var wheelLock = 0;
+  window.addEventListener('wheel', function (e) {
+    if (!sheetLive || Math.abs(e.deltaX) < 30 || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+    var now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    go(idx + (e.deltaX > 0 ? 1 : -1));
+  }, { passive: true });
+
+  // swipe / drag
+  var dsx = 0, dsy = 0, dragging = false, pid = null;
+  pagesEl.addEventListener('pointerdown', function (e) {
+    if (!sheetLive) return;
+    dsx = e.clientX; dsy = e.clientY; dragging = false; pid = e.pointerId;
+  });
+  pagesEl.addEventListener('pointermove', function (e) {
+    if (pid !== e.pointerId) return;
+    var dx = e.clientX - dsx, dy = e.clientY - dsy;
+    if (!dragging && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      dragging = true; pagesEl.classList.add('dragging');
+      try { pagesEl.setPointerCapture(pid); } catch (er) {}
+    }
+    if (dragging) {
+      var atEdge = (idx === 0 && dx > 0) || (idx === pageEls.length - 1 && dx < 0);
+      dragX = atEdge ? dx * 0.25 : dx; renderPages();
+    }
+  });
+  function endDrag(e) {
+    if (pid !== e.pointerId) return;
+    var dx = e.clientX - dsx; pid = null;
+    pagesEl.classList.remove('dragging');
+    if (dragging) { dragging = false; var th = Math.min(90, sheetEl.clientWidth * 0.15); if (dx < -th) go(idx + 1); else if (dx > th) go(idx - 1); else go(idx); }
+  }
+  pagesEl.addEventListener('pointerup', endDrag);
+  pagesEl.addEventListener('pointercancel', endDrag);
+  renderPages();
+
+  // countdown to December 5, 2026, 4pm (Philippine time)
+  var PARTY = new Date('2026-12-05T16:00:00+08:00').getTime();
+  var tD = document.getElementById('tD'), tH = document.getElementById('tH'), tM = document.getElementById('tM'), tDone = document.getElementById('tDone');
+  function two(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    var d = Math.max(0, PARTY - Date.now());
+    tD.textContent = two(Math.floor(d / 864e5));
+    tH.textContent = two(Math.floor(d % 864e5 / 36e5));
+    tM.textContent = two(Math.floor(d % 36e5 / 6e4));
+    tDone.textContent = d === 0 ? "it's party time!" : '';
+  }
+  tick(); setInterval(tick, 1000);
+
+  /* ---------- scroll-driven scene ---------- */
+  var target = 0, cur = 0, lastScrollY = window.scrollY, burstArmed = true, burst2 = true, burst3 = true;
+
+  function readScroll() {
+    target = Math.max(0, window.scrollY / window.innerHeight); // in screens scrolled
+  }
+  function easeOutBack(t, c1) { var c3 = c1 + 1, q = t - 1; return 1 + c3 * q * q * q + c1 * q * q; }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function setT(el, x, y, rot, sc) {
+    el.style.transform = 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) rotate(' + rot.toFixed(3) + 'deg) scale(' + sc.toFixed(4) + ')';
+  }
+
+  function apply(u, t) {
+    var p = clamp(u / 2.8, 0, 1);             // invitation: first 2.8 screens
+    var g = easeSine(clamp((u - 2.8) / 0.5, 0, 1));   // sheet slides up
+    var tm = easeSine(clamp((u - 3.9) / 0.5, 0, 1));  // sheet shrinks into the countdown card
+    // 1. flap opens
+    var a = easeSine(clamp((p - 0.04) / 0.22, 0, 1)) * 180;
+    // 2. later the empty envelope slides down and out of view
+    var md = Math.pow(clamp((p - 0.58) / 0.12, 0, 1), 2.2);
+    var x = c0x - 0.03 * W * md;
+    var y = c0y + md * (H * 0.5 + 330 * k);
+    if (!RM && p < 0.04) y += Math.sin(t * 1.6) * 3 * (1 - p / 0.04);
+    var r = 6 * md;
+    var s = k;
+
+    env.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) rotate(' + r.toFixed(3) + 'deg) scale(' + s.toFixed(4) + ')';
+
+    var lean = easeSine(clamp((a - 110) / 70, 0, 1));
+    var sy = lerp(1, 0.54, lean);
+    flap.style.transform = 'perspective(900px) rotateX(' + a.toFixed(2) + 'deg) scaleY(' + sy.toFixed(4) + ')';
+    var front = a < 90;
+    flapFront.style.visibility = front ? 'visible' : 'hidden';
+    flapBack.style.visibility = front ? 'hidden' : 'visible';
+    flapFront.style.filter = 'brightness(' + (1 - 0.07 * Math.sin(a * Math.PI / 180)).toFixed(3) + ')';
+
+    // 3. card and postcard slide out of the envelope (local coords, so they ride with it)
+    var shown = a > 95 ? 'visible' : 'hidden';
+    cardEl.style.visibility = shown; pcEl.style.visibility = shown;
+
+    var ee = easeOutBack(clamp((p - 0.66) / 0.2, 0, 1), 0.8);
+    var rr = -r * Math.PI / 180, cs = Math.cos(rr), sn = Math.sin(rr);
+    function layer(el, name, p0, dur, side) {
+      var R0 = REST[name], R1 = RISE[name], F = FIN[name], lx, ly, lrot, lsc;
+      if (p < 0.58) {
+        var u = clamp((p - p0) / dur, 0, 1), e = easeOutBack(u, 0.7);
+        lx = lerp(R0.x, R1.x, e) - 243; ly = lerp(R0.y, R1.y, e) - 184;
+        lrot = lerp(R0.rot, R1.rot, e) + Math.sin(u * Math.PI * 2) * 2.2 * side * (1 - u);
+        lsc = lerp(R0.sc, R1.sc, e);
+        // while still moving with the envelope nothing else to do
+      } else {
+        // hold in screen space, then grow into the final layout
+        var sx = c0x + k * (R1.x - 243), sy2 = c0y + k * (R1.y - 184);
+        var X = lerp(sx, F.x, ee), Y = lerp(sy2, F.y, ee), ROT = lerp(R1.rot, F.rot, ee), SC = lerp(k * R1.sc, F.sc, ee);
+        var dx = X - x, dy = Y - y;
+        lx = (dx * cs - dy * sn) / s; ly = (dx * sn + dy * cs) / s;
+        lrot = ROT - r; lsc = SC / s;
+      }
+      setT(el, lx, ly, lrot, lsc);
+    }
+    layer(cardEl, 'card', 0.22, 0.22, 1);
+    layer(pcEl, 'postcard', 0.38, 0.20, -1);
+    if (p > 0.9 && g < 0.02) pcEl.classList.add('live'); else pcEl.classList.remove('live');
+
+    // sheet + countdown
+    sheetEl.style.setProperty('--g', g.toFixed(4)); sheetEl.style.setProperty('--tm', tm.toFixed(4));
+    stage.style.setProperty('--g', g.toFixed(4)); stage.style.setProperty('--tm', tm.toFixed(4));
+    sheetEl.classList.toggle('on', g > 0.001);
+    sheetLive = g > 0.9 && tm < 0.1;
+    sheetEl.classList.toggle('live', sheetLive);
+    sceneEl.style.opacity = (1 - clamp(g * 1.5, 0, 1)).toFixed(3);
+    sceneEl.style.transform = 'translateY(' + (-g * 7).toFixed(2) + 'vh) scale(' + (1 - g * 0.05).toFixed(4) + ')';
+    sceneEl.style.visibility = g > 0.7 ? 'hidden' : 'visible';
+
+    // 4. decorations pop in like bubbles, then keep bobbing
+    for (var i = 0; i < DEC.length; i++) {
+      var d = DEC[i], F2 = FIN[d.name], u2 = clamp((p - d.t0) / d.dur, 0, 1);
+      if (u2 <= 0) { d.el.style.visibility = 'hidden'; continue; }
+      d.el.style.visibility = 'visible';
+      var e2 = easeOutBack(u2, 2.2), px = F2.x, py = F2.y, pr = F2.rot, ps = F2.sc * e2, tt = RM ? 0 : t;
+      if (d.kind === 'flower') {
+        pr += (1 - u2) * d.spin + Math.sin(tt * 1.3 + i) * 4 * u2;
+      } else if (d.kind === 'buoy') {
+        py += (1 - easeOutCubic(u2)) * 70 * F2.sc + Math.sin(tt * 1.6) * 5 * u2;
+        pr += Math.sin(tt * 1.1) * 3.5 * u2 + (1 - u2) * 25;
+      } else {
+        // little hop in, then a staggered bounce
+        py -= Math.sin(Math.PI * Math.min(1, u2 * 1.0)) * 28 * F2.sc / 0.39 * (u2 < 1 ? 1 : 0);
+        py -= Math.max(0, Math.sin(tt * 2.4 + i * 1.3)) * 6 * (F2.sc / 0.39) * u2;
+      }
+      setT(d.el, px, py, pr, Math.max(ps, 0.0001));
+    }
+
+    hint.style.setProperty('--h', Math.max(1 - clamp(p / 0.05, 0, 1), g * (1 - clamp(tm * 3, 0, 1))).toFixed(3));
+    tapEl.style.setProperty('--h', (clamp((p - 0.97) / 0.03, 0, 1) * (1 - clamp(g * 4, 0, 1))).toFixed(3));
+
+    // bubble bursts at the big moments
+    if (a > 22 && burstArmed) { burstArmed = false; emitBurst(x, y - 70 * k); }
+    else if (a < 6) burstArmed = true;
+    if (p > 0.6 && burst2) { burst2 = false; emitBurst(W / 2, H * 0.5); }
+    else if (p < 0.55) burst2 = true;
+    if (p > 0.84 && burst3) { burst3 = false; emitBurst(W / 2, H * 0.7); emitBurst(W * 0.3, H * 0.6); emitBurst(W * 0.7, H * 0.6); }
+    else if (p < 0.8) burst3 = true;
+  }
+
+  var last = performance.now(), t0 = last;
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    var t = (now - t0) / 1000;
+    cur = RM ? target : cur + (target - cur) * (1 - Math.exp(-dt * 12));
+    if (Math.abs(target - cur) < 0.0002) cur = target;
+
+    var sy = window.scrollY;
+    var vel = dt ? (sy - lastScrollY) / dt : 0;
+    lastScrollY = sy;
+    scrollKick += (clamp(-vel * 0.05, -90, 90) - scrollKick) * (1 - Math.exp(-dt * 4));
+
+    apply(cur, t);
+    drawStars(RM ? 0 : dt, t);
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('scroll', readScroll, { passive: true });
+  window.addEventListener('resize', function () { layout(); readScroll(); });
+  layout();
+  readScroll();
+  cur = target;
+  requestAnimationFrame(frame);
+})();
+</script>
+
+
+
+
+</body></html>
